@@ -1,58 +1,96 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="field mr-6">
+        <div class="control">
+          <label class="label">Nombre</label>
+          <input v-model="title" class="input" type="text" placeholder="Nombre">
+        </div>
+        <div class="control">
+          <label class="label">Tiempo</label>
+          <input v-model="time" class="input" type="number" placeholder="Descripción">
+        </div>
+        <div class="control">
+          <label class="label">Descripción</label>
+          <textarea v-model="description" class="textarea" placeholder="Tiempo"></textarea>
+        </div>
+        <button @click="addTask" class="button is-link mt-4 is-pulled-left">
+          <fa icon="plus"/>
+          Añadir
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="table is-striped ">
+          <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Tiempo</th>
+            <th>Opciones</th>
+          </tr>
+          </thead>
+          <tbody v-if="courses">
+          <tr v-for="(course, index) in courses" :key="course">
+            <td>{{ course.title }}</td>
+            <td>{{ course.description }}</td>
+            <td class="has-text-centered">{{ course.time }} hrs</td>
+            <td class="has-text-centered">
+              <button @click="removeCourse(index)" class="button is-danger is-small">
+                <fa icon="ban"/>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
+  data() {
+    return {
+      courses: [],
+      title: null,
+      description: null,
+      time: null
+    }
+  },
+  computed: {
+    totalTime() {
+      let total = 0;
+
+      for (let course of this.courses) {
+        total = total + parseInt(course.time);
+      }
+
+      return total;
+    }
+  },
+
+  methods: {
+    addTask(){
+      if (this.title && this.description && this.time) {
+        this.courses.push({ title: this.title, time: this.time, description: this.description });
+        localStorage.setItem("courses", JSON.stringify(this.courses));
+      }
+
+      this.title = null;
+      this.time = null;
+      this.description = null;
+    },
+    removeCourse(i) {
+      this.courses.splice(i, 1);
+      localStorage.setItem("courses", JSON.stringify(this.courses));
+    }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+
+<style>
+
+
 </style>
